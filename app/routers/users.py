@@ -4,6 +4,7 @@ from app.database import get_db
 from app.models import User
 from app.schemas.user import UserCreate, UserOut
 from app.utils.security import get_password_hash
+from app.dependencies.auth import get_current_user
 
 router = APIRouter(tags=["users"])
 
@@ -22,3 +23,13 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+
+@router.get("/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "username": current_user.username,
+        "is_admin": current_user.is_admin,
+        "disabled": current_user.disabled
+    }

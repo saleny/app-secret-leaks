@@ -1,0 +1,4 @@
+запускать так
+
+
+uvicorn main:app --reload

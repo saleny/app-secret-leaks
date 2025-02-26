@@ -10,5 +10,9 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+    @property
+    def sqlite_db(self):
+        return self.DATABASE_URL.startswith("sqlite")
+
 
 settings = Settings()
