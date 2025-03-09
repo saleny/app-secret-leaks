@@ -1,4 +1,4 @@
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException,status, Path
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException,status, Path, Response
 import uuid
 from sqlalchemy.orm import Session
 from typing import List  # Важно для аннотаций типов
@@ -104,3 +104,33 @@ async def get_scan_results(
     ).all()
 
     return scans
+
+
+@router.delete("/{project_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_project(
+        project_id: str,
+        db: Session = Depends(get_db),
+        current_user: User = Depends(get_current_user)
+):
+    # Находим проект и проверяем права
+    project = db.query(Project).filter(
+        Project.id == project_id,
+        (Project.owner_id == current_user.id) | (current_user.is_admin)
+    ).first()
+
+    if not project:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Project not found"
+        )
+
+    # Удаляем связанные сканирования
+    db.query(ScanResult).filter(
+        ScanResult.project_id == project_id
+    ).delete()
+
+    # Удаляем сам проект
+    db.delete(project)
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
