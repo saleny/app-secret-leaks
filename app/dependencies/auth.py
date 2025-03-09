@@ -42,9 +42,17 @@ async def get_current_active_user(
     return current_user
 
 
-def check_admin_privileges(user: User):
-    if user.role != "admin":
+# def check_admin_privileges(user: User):
+#     if user.role != "admin":
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Insufficient permissions"
+#         )
+
+def check_admin(user: User = Depends(get_current_user)):
+    if not user.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Insufficient permissions"
+            detail="Admin privileges required"
         )
+    return user  # Явно возвращаем пользователя, если проверка пройдена

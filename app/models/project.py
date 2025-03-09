@@ -7,7 +7,7 @@ class Project(Base):
     __tablename__ = "projects"
 
     id = Column(String, primary_key=True, index=True)
-    repo_url = Column(String)
+    repo_url = Column(String, unique=True)
     project_name = Column(String)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     owner_id = Column(Integer, ForeignKey("users.id"))

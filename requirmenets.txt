@@ -3,8 +3,9 @@ sqlalchemy
 pydantic
 pydantic-settings
 uvicorn
-requests
 python-jose[cryptography]
 passlib
-python-multipart
 bcrypt
+
+requests
+python-multipart

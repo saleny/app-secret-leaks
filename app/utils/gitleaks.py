@@ -1,9 +1,7 @@
 import subprocess
 import os
 import shutil
-from typing import Dict
-import uuid
-from sqlalchemy.orm import Session
+from uuid import uuid4
 from app.database import SessionLocal
 from app.models import ScanResult
 
@@ -49,7 +47,7 @@ def scan_repository(project_id: str, repo_url: str):
             findings = f.read()
 
         scan_result = ScanResult(
-            id=str(uuid.uuid4()),
+            id=str(uuid4()),
             project_id=project_id,
             findings=findings,
             status="completed"
@@ -59,7 +57,7 @@ def scan_repository(project_id: str, repo_url: str):
 
     except Exception as e:
         scan_result = ScanResult(
-            id=str(uuid.uuid4()),
+            id=str(uuid4()),
             project_id=project_id,
             findings={"error": str(e)},
             status="failed"
